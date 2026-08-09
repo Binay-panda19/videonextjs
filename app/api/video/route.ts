@@ -4,6 +4,7 @@ import Video, { IVideo } from "@/models/Video";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import mongoose from "mongoose";
 
 export async function GET() {
   try {
@@ -27,13 +28,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     await ConnectDB();
+
     const session = await getServerSession(authOptions);
 
-    if (!session) {
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body: IVideo = await request.json();
+    const body = await request.json();
 
     if (
       !body.title ||
@@ -47,26 +49,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const videoData: IVideo = {
-      ...body,
+    const userId = session.user.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        {
+          error: "User ID not found in session.",
+        },
+        { status: 401 },
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json(
+        {
+          error: "Invalid user ID",
+        },
+        { status: 400 },
+      );
+    }
+
+    const videoData = {
+      title: body.title,
+      description: body.description,
+      videoUrl: body.videoUrl,
+      thumbnailUrl: body.thumbnailUrl,
+
       controls: body.controls ?? true,
+
       transformations: {
         width: 1920,
         height: 1080,
         quality: body.transformations?.quality ?? 100,
       },
+
+      userId: new mongoose.Types.ObjectId(userId),
     };
 
-    const newVideo = await Video.create({ videoData });
+    const newVideo = await Video.create(videoData);
 
     return NextResponse.json(
-      { message: "Video created successfully", video: newVideo },
+      {
+        message: "Video created successfully",
+        video: newVideo,
+      },
       { status: 201 },
     );
   } catch (err) {
-    console.error("Error creating video: " + (err as Error).message);
+    console.error("Error creating video:", err);
+
     return NextResponse.json(
-      { error: "Error creating video" },
+      {
+        error: "Error creating video",
+      },
       { status: 500 },
     );
   }

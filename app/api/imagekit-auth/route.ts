@@ -8,16 +8,19 @@ export async function GET() {
     });
 
     return Response.json({
-      authenticationParams,
+      ...authenticationParams,
       publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
     });
   } catch (err) {
-    console.error("Error in imagekit auth funcx: " + (err as Error).message);
+    console.error("Error in ImageKit auth function:", (err as Error).message);
+
     return Response.json(
       {
-        error: "Error in imagekit auth funcx: " + (err as Error).message,
+        error: "Error in ImageKit auth function: " + (err as Error).message,
       },
-      { status: 500 },
+      {
+        status: 500,
+      },
     );
   }
 }
