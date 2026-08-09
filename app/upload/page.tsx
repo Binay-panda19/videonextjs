@@ -11,8 +11,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-import FileUpload from "@/app/components/FileUpload";
+import FileUpload from "@/components/FileUpload";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface UploadedFile {
   url: string;
@@ -32,6 +33,8 @@ export default function UploadPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  const router = useRouter();
 
   // -----------------------------
   // Save video metadata
@@ -97,6 +100,8 @@ export default function UploadPage() {
 
       setVideoProgress(0);
       setThumbnailProgress(0);
+
+      router.push("/");
     } catch (error) {
       console.error("Save video error:", error);
 
