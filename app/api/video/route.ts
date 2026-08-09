@@ -9,18 +9,29 @@ import mongoose from "mongoose";
 export async function GET() {
   try {
     await ConnectDB();
-    const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
 
-    if (!videos || videos.length === 0) {
-      return NextResponse.json({ error: "No videos found" }, { status: 404 });
-    }
+    const videos = await Video.find()
+      .populate("userId", "name email image")
+      .sort({ createdAt: -1 });
 
-    return NextResponse.json(videos, { status: 200 });
-  } catch (err) {
-    console.error("Error fetching videos: " + (err as Error).message);
     return NextResponse.json(
-      { error: "Error fetching videos" },
-      { status: 500 },
+      {
+        videos,
+      },
+      {
+        status: 200,
+      },
+    );
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+
+    return NextResponse.json(
+      {
+        error: "Failed to fetch videos",
+      },
+      {
+        status: 500,
+      },
     );
   }
 }
