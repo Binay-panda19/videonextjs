@@ -31,19 +31,19 @@ class ApiClient {
     return response.json();
   }
 
-  async createVideo(videoData: VideoData) {
-    return this.fetch("/videos", {
-      method: "POST",
-      body: videoData,
-    });
-  }
-
   async getVideos() {
     return this.fetch<{ videos: VideoData[] }>("/video");
   }
 
   async getVideo(id: string) {
     return this.fetch<{ video: VideoData }>(`/video/${id}`);
+  }
+
+  async createVideo(videoData: VideoData) {
+    return this.fetch("/video", {
+      method: "POST",
+      body: videoData,
+    });
   }
 }
 
