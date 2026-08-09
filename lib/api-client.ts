@@ -32,14 +32,14 @@ class ApiClient {
   }
 
   async getVideos() {
-    return this.fetch<{ videos: VideoData[] }>("/videos");
+    return this.fetch<{ videos: VideoData[] }>("/video");
   }
 
   async getVideo(id: string) {
-    return this.fetch<{ video: VideoData }>(`/videos/${id}`);
+    return this.fetch<{ video: VideoData }>(`/video/${id}`);
   }
 
-  async createVideo(videoData: VideoFormData) {
+  async createVideo(videoData: VideoData) {
     return this.fetch("/video", {
       method: "POST",
       body: videoData,

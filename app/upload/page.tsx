@@ -11,7 +11,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-import FileUpload from "@/app/components/FileUpload";
+import FileUpload from "@/components/FileUpload";
 import { useSession } from "next-auth/react";
 
 interface UploadedFile {

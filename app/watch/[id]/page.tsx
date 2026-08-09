@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-import Navbar from "../../components/Navbar";
+import Navbar from "../../../components/Navbar";
 import { apiClient } from "../../../lib/api-client";
 
 interface VideoUser {
